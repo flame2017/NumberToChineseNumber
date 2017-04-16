@@ -49,7 +49,7 @@ private:
 			mResult += jinzhi[0];
 		}
 		
-		transFormWan( inNumber%YI );
+		transFormWan( inNumber%YI);
 		
 		return true;
 	}
@@ -62,20 +62,20 @@ private:
 				if (!mResult.empty())
 					mResult = mResult.substr(0, mResult.size()+1-sizeof"零");
 
-			transFormQian( inNumber/WAN );
+			transFormQian( inNumber/WAN,  true);
 			mResult += jinzhi[1];
 		}
 		
-		transFormQian( inNumber%WAN );
+		transFormQian( inNumber%WAN, false);
 		
 		return true; 
 	}
 	//3.检查千位
-	bool transFormQian(long inNumber)
+	bool transFormQian(long inNumber, bool wFlag)
 	{ 
 		if ( inNumber/QIAN )
 		{
-			transFormGe( inNumber/QIAN );
+			transFormGe( inNumber/QIAN, wFlag);
 			mResult += jinzhi[2];
 		}
 		
@@ -89,16 +89,16 @@ private:
 
 		if((inNumber/QIAN == 0) && (!mResult.empty()))
 			mResult += gewei[0];
-		transFormBai( inNumber%QIAN );
+		transFormBai( inNumber%QIAN, wFlag);
 		
 		return true;
 	}
 	//4.检查百位
-	bool transFormBai(long inNumber) 
+	bool transFormBai(long inNumber, bool wFlag) 
 	{ 
 		if ( inNumber/BAI )
 		{
-			transFormGe( inNumber/BAI );
+			transFormGe( inNumber/BAI, wFlag);
 			mResult += jinzhi[3];
 		}
 
@@ -111,16 +111,16 @@ private:
 
 		if ((inNumber / BAI == 0) && (!mResult.empty()))
 			mResult += gewei[0];
-		transFormShi( inNumber%BAI );
+		transFormShi( inNumber%BAI, wFlag);
 		
 		return true;
 	}
 	//5.检查十位
-	bool transFormShi(long inNumber) 
+	bool transFormShi(long inNumber, bool wFlag)
 	{ 
 		if ( inNumber/SHI )
 		{
-			transFormGe( inNumber/SHI );
+			transFormGe( inNumber/SHI, wFlag);
 			if (mResult == gewei[1])
 				mResult.clear();
 
@@ -137,13 +137,22 @@ private:
 		if ((inNumber / SHI == 0) && (!mResult.empty()))
 			mResult += gewei[0];
 
-		transFormGe( inNumber%SHI );
+		transFormGe( inNumber%SHI, wFlag);
 		
 		return true;
 	}
 	//6.检查个位
-	bool transFormGe(long inNumber) 
+	bool transFormGe(long inNumber, bool wFlag) 
 	{ 
+		int ret = 0;
+		if (wFlag)
+		{
+			if (!mResult.empty())
+				ret = strcmp(mResult.c_str() + mResult.size() + 1 - sizeof"零", "零");
+			if (!ret && !mResult.empty())
+				mResult = mResult.substr(0, mResult.size() + 1 - sizeof"零");
+		}
+
 		if(inNumber)
 			mResult += gewei[inNumber];
 		return true;
